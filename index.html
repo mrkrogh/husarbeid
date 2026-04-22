@@ -27,44 +27,47 @@
     font-family: 'DM Sans', sans-serif;
     background: var(--bg);
     min-height: 100vh;
-    padding: 24px 16px 48px;
+    padding: 32px 16px 64px;
     color: var(--text);
   }
 
+  /* ── HEADER ── */
   header {
-    max-width: 700px;
-    margin: 0 auto 28px;
+    max-width: 560px;
+    margin: 0 auto 20px;
   }
-
   header h1 {
-    font-size: clamp(22px, 5vw, 30px);
+    font-size: clamp(22px, 5vw, 28px);
     font-weight: 600;
     letter-spacing: -0.5px;
   }
-
   header p {
     font-size: 13px;
     color: var(--muted);
-    margin-top: 4px;
+    margin-top: 5px;
   }
 
-  /* ── LEGEND ── */
+  /* ── BADGE NAV ── */
   .legend {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    max-width: 700px;
-    margin: 0 auto 20px;
+    max-width: 560px;
+    margin: 0 auto 16px;
   }
 
   .badge {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     font-weight: 500;
-    padding: 5px 12px;
+    padding: 6px 14px;
     border-radius: 999px;
     letter-spacing: 0.03em;
+    text-decoration: none;
+    transition: opacity 0.15s, transform 0.15s;
+    display: inline-block;
   }
+  .badge:hover { opacity: 0.75; transform: translateY(-1px); }
 
   .b-i { background: var(--isaac-bg);   color: var(--isaac-fg); }
   .b-l { background: var(--lucy-bg);    color: var(--lucy-fg); }
@@ -72,88 +75,73 @@
   .b-g { background: var(--genesis-bg); color: var(--genesis-fg); }
   .b-c { background: var(--calvin-bg);  color: var(--calvin-fg); }
 
-  /* ── DESKTOP TABLE ── */
-  .table-wrap {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: var(--card);
-    border-radius: 16px;
-    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
-    overflow: hidden;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-
-  thead th {
-    background: #f5f2ed;
-    color: var(--muted);
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 12px 10px;
-    text-align: center;
-    border-bottom: 1px solid var(--border);
-  }
-
-  thead th:first-child { text-align: left; padding-left: 18px; }
-
-  tbody tr { border-bottom: 1px solid var(--border); }
-  tbody tr:last-child { border-bottom: none; }
-
-  td {
-    padding: 10px 8px;
-    vertical-align: top;
-  }
-
-  td.name-cell {
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--text);
-    padding-left: 18px;
-    white-space: nowrap;
-    vertical-align: middle;
-    background: #f9f7f4;
-    border-right: 1px solid var(--border);
-  }
-
-  td.empty { background: transparent; }
-
-  .pill {
-    display: block;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 6px;
-    margin-bottom: 4px;
-    line-height: 1.4;
-  }
-
-  .p-i { background: var(--isaac-bg);   color: var(--isaac-fg); }
-  .p-l { background: var(--lucy-bg);    color: var(--lucy-fg); }
-  .p-s { background: var(--sabela-bg);  color: var(--sabela-fg); }
-  .p-g { background: var(--genesis-bg); color: var(--genesis-fg); }
-  .p-c { background: var(--calvin-bg);  color: var(--calvin-fg); }
-
-  /* ── MOBILE CARDS ── */
-  .mobile-cards {
+  /* ── SHOW ALL BUTTON ── */
+  .show-all-wrap {
+    max-width: 560px;
+    margin: 0 auto 20px;
     display: none;
+  }
+  .show-all-btn {
+    background: var(--text);
+    color: #fff;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .show-all-btn:hover { opacity: 0.75; }
+
+  /* ── CARDS GRID ── */
+  .cards {
+    display: flex;
     flex-direction: column;
     gap: 16px;
-    max-width: 500px;
+    max-width: 560px;
     margin: 0 auto;
   }
 
+  /* On wider screens, show two columns */
+  @media (min-width: 700px) {
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 900px;
+      align-items: start;
+    }
+    /* Let the last card (Calvin) not stretch if alone in its row */
+    .person-card:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      max-width: 440px;
+      justify-self: center;
+      width: 100%;
+    }
+  }
+
+  /* ── PERSON CARD ── */
   .person-card {
     background: var(--card);
     border-radius: 16px;
     box-shadow: 0 2px 16px rgba(0,0,0,0.06);
     overflow: hidden;
+    transition: opacity 0.3s, transform 0.3s, box-shadow 0.3s;
+    scroll-margin-top: 28px;
   }
 
+  .person-card.dimmed {
+    opacity: 0.18;
+    transform: scale(0.98);
+    pointer-events: none;
+  }
+
+  .person-card.highlighted {
+    box-shadow: 0 0 0 3px var(--hl, #1c1917), 0 6px 28px rgba(0,0,0,0.13);
+  }
+
+  /* ── CARD HEADER ── */
   .person-header {
     display: flex;
     align-items: center;
@@ -163,33 +151,28 @@
   }
 
   .person-dot {
-    width: 10px;
-    height: 10px;
+    width: 10px; height: 10px;
     border-radius: 50%;
     flex-shrink: 0;
   }
-
   .d-i { background: var(--isaac-fg); }
   .d-l { background: var(--lucy-fg); }
   .d-s { background: var(--sabela-fg); }
   .d-g { background: var(--genesis-fg); }
   .d-c { background: var(--calvin-fg); }
 
-  .person-name {
-    font-weight: 600;
-    font-size: 15px;
-  }
+  .person-name { font-weight: 600; font-size: 15px; }
 
-  .day-rows { padding: 8px 0; }
+  /* ── DAY ROWS ── */
+  .day-rows { padding: 6px 0; }
 
   .day-row {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    padding: 8px 16px;
+    padding: 9px 16px;
     border-bottom: 1px solid var(--border);
   }
-
   .day-row:last-child { border-bottom: none; }
 
   .day-label {
@@ -199,33 +182,69 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--muted);
-    width: 52px;
+    width: 54px;
     flex-shrink: 0;
-    padding-top: 4px;
+    padding-top: 5px;
   }
 
-  .day-tasks { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+  .day-tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex: 1;
+  }
 
-  .day-empty {
-    font-size: 12px;
-    color: #c5bfb8;
-    padding-top: 4px;
+  /* ── TASK ITEM ── */
+  /*
+    Each task is a <div class="task-item">
+      <span class="pill p-X">Oppgavenavn</span>
+      <!-- Optional: add a <span class="task-note"> for dates or extra info -->
+    </div>
+  */
+  .task-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .pill {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    line-height: 1.4;
+  }
+
+  .p-i { background: var(--isaac-bg);   color: var(--isaac-fg); }
+  .p-l { background: var(--lucy-bg);    color: var(--lucy-fg); }
+  .p-s { background: var(--sabela-bg);  color: var(--sabela-fg); }
+  .p-g { background: var(--genesis-bg); color: var(--genesis-fg); }
+  .p-c { background: var(--calvin-bg);  color: var(--calvin-fg); }
+
+  /*
+    TASK NOTE — legg til datoer eller ekstra info her.
+    Eksempel:
+      <span class="task-note">5. jan, 2. feb, 2. mars</span>
+  */
+  .task-note {
+    font-size: 11px;
+    color: var(--muted);
+    padding-left: 2px;
+    line-height: 1.5;
   }
 
   /* ── FOOTER ── */
   .footer-note {
-    max-width: 700px;
+    max-width: 560px;
     margin: 24px auto 0;
     font-size: 13px;
     color: var(--muted);
     line-height: 1.7;
-    padding: 0 4px;
   }
 
-  /* ── RESPONSIVE ── */
-  @media (max-width: 640px) {
-    .table-wrap { display: none; }
-    .mobile-cards { display: flex; }
+  @media (min-width: 700px) {
+    .footer-note { max-width: 900px; }
   }
 </style>
 </head>
@@ -233,240 +252,344 @@
 
 <header>
   <h1>🏠 Husarbeidsplan</h1>
-  <p>Ukentlig oversikt over hvem som gjør hva</p>
+  <p>Trykk på et navn for å se den personens oppgaver</p>
 </header>
 
 <div class="legend">
-  <span class="badge b-i">Isaac</span>
-  <span class="badge b-l">Lucy</span>
-  <span class="badge b-s">Sabela</span>
-  <span class="badge b-g">Genesis</span>
-  <span class="badge b-c">Calvin</span>
+  <a class="badge b-i" href="#isaac">Isaac</a>
+  <a class="badge b-l" href="#lucy">Lucy</a>
+  <a class="badge b-s" href="#sabela">Sabela</a>
+  <a class="badge b-g" href="#genesis">Genesis</a>
+  <a class="badge b-c" href="#calvin">Calvin</a>
 </div>
 
-<!-- ── DESKTOP TABLE ── -->
-<div class="table-wrap">
-  <table>
-    <thead>
-      <tr>
-        <th style="text-align:left; padding-left:18px;">Person</th>
-        <th>Mandag</th>
-        <th>Tirsdag</th>
-        <th>Onsdag</th>
-        <th>Torsdag</th>
-        <th>Fredag</th>
-        <th>Lørdag</th>
-        <th>Søndag</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="name-cell">Isaac</td>
-        <td class="empty"></td>
-        <td><span class="pill p-i">Støvsuge hele leiligheten</span><span class="pill p-i">Ta ut søpla</span></td>
-        <td class="empty"></td>
-        <td><span class="pill p-i">Fikse kjøkkenet</span></td>
-        <td class="empty"></td>
-        <td><span class="pill p-i">Handle på Grønland (oddetallsuker)</span></td>
-        <td><span class="pill p-i">Vaske badet (hver fjerde helg)</span></td>
-      </tr>
-      <tr>
-        <td class="name-cell">Lucy</td>
-        <td><span class="pill p-l">Støvsuge hele leiligheten</span><span class="pill p-l">Ta ut søpla</span></td>
-        <td class="empty"></td>
-        <td><span class="pill p-l">Fikse kjøkkenet</span></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td><span class="pill p-l">Handle på Grønland (partallsuker)</span></td>
-        <td><span class="pill p-l">Vaske badet (hver fjerde helg)</span></td>
-      </tr>
-      <tr>
-        <td class="name-cell">Sabela</td>
-        <td><span class="pill p-s">Fikse kjøkkenet</span></td>
-        <td class="empty"></td>
-        <td><span class="pill p-s">Støvsuge hele leiligheten</span><span class="pill p-s">Ta ut søpla</span></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td><span class="pill p-s">Handle på Grønland (partallsuker)</span></td>
-        <td><span class="pill p-s">Vaske badet (hver fjerde helg)</span></td>
-      </tr>
-      <tr>
-        <td class="name-cell">Genesis</td>
-        <td class="empty"></td>
-        <td><span class="pill p-g">Fikse kjøkkenet</span></td>
-        <td class="empty"></td>
-        <td><span class="pill p-g">Støvsuge hele leiligheten</span><span class="pill p-g">Ta ut søpla</span></td>
-        <td class="empty"></td>
-        <td><span class="pill p-g">Handle på Grønland (oddetallsuker)</span></td>
-        <td><span class="pill p-g">Vaske badet (hver fjerde helg)</span></td>
-      </tr>
-      <tr>
-        <td class="name-cell">Calvin</td>
-        <td class="empty"></td>
-        <td><span class="pill p-c">Moppe</span></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td><span class="pill p-c">Moppe</span><span class="pill p-c">Støvsuge hele leiligheten</span></td>
-        <td><span class="pill p-c">Fikse kjøkkenet</span></td>
-        <td><span class="pill p-c">Fikse kjøkkenet</span></td>
-      </tr>
-    </tbody>
-  </table>
+<div class="show-all-wrap" id="showAllWrap">
+  <button class="show-all-btn" onclick="showAll()">← Vis hele planen</button>
 </div>
 
-<!-- ── MOBILE CARDS ── -->
-<div class="mobile-cards">
+<div class="cards">
 
-  <!-- Isaac -->
-  <div class="person-card">
+  <!-- ═══════════════════════════════
+       ISAAC
+       ═══════════════════════════════ -->
+  <div class="person-card" id="isaac" data-color="#1e3a8a">
     <div class="person-header">
       <div class="person-dot d-i"></div>
       <span class="person-name">Isaac</span>
     </div>
     <div class="day-rows">
+
       <div class="day-row">
         <span class="day-label">Tirsdag</span>
         <div class="day-tasks">
-          <span class="pill p-i">Støvsuge hele leiligheten</span>
-          <span class="pill p-i">Ta ut søpla</span>
+          <div class="task-item">
+            <span class="pill p-i">Støvsuge hele leiligheten</span>
+          </div>
+          <div class="task-item">
+            <span class="pill p-i">Ta ut søpla</span>
+          </div>
         </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Torsdag</span>
-        <div class="day-tasks"><span class="pill p-i">Fikse kjøkkenet</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-i">Fikse kjøkkenet</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Lørdag</span>
-        <div class="day-tasks"><span class="pill p-i">Handle på Grønland (oddetallsuker)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-i">Handle på Grønland</span>
+            <!-- Legg til datoer her, f.eks.: -->
+            <!-- <span class="task-note">5. jan · 19. jan · 2. feb</span> -->
+            <span class="task-note">Oddetallsuker</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Søndag</span>
-        <div class="day-tasks"><span class="pill p-i">Vaske badet (hver fjerde helg)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-i">Vaske badet</span>
+            <!-- Legg til datoer her, f.eks.: -->
+            <!-- <span class="task-note">12. jan · 9. feb · 9. mars</span> -->
+            <span class="task-note">Hver fjerde helg</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Lucy -->
-  <div class="person-card">
+  <!-- ═══════════════════════════════
+       LUCY
+       ═══════════════════════════════ -->
+  <div class="person-card" id="lucy" data-color="#831843">
     <div class="person-header">
       <div class="person-dot d-l"></div>
       <span class="person-name">Lucy</span>
     </div>
     <div class="day-rows">
+
       <div class="day-row">
         <span class="day-label">Mandag</span>
         <div class="day-tasks">
-          <span class="pill p-l">Støvsuge hele leiligheten</span>
-          <span class="pill p-l">Ta ut søpla</span>
+          <div class="task-item">
+            <span class="pill p-l">Støvsuge hele leiligheten</span>
+          </div>
+          <div class="task-item">
+            <span class="pill p-l">Ta ut søpla</span>
+          </div>
         </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Onsdag</span>
-        <div class="day-tasks"><span class="pill p-l">Fikse kjøkkenet</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-l">Fikse kjøkkenet</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Lørdag</span>
-        <div class="day-tasks"><span class="pill p-l">Handle på Grønland (partallsuker)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-l">Handle på Grønland</span>
+            <span class="task-note">Partallsuker</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Søndag</span>
-        <div class="day-tasks"><span class="pill p-l">Vaske badet (hver fjerde helg)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-l">Vaske badet</span>
+            <span class="task-note">Hver fjerde helg</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Sabela -->
-  <div class="person-card">
+  <!-- ═══════════════════════════════
+       SABELA
+       ═══════════════════════════════ -->
+  <div class="person-card" id="sabela" data-color="#064e3b">
     <div class="person-header">
       <div class="person-dot d-s"></div>
       <span class="person-name">Sabela</span>
     </div>
     <div class="day-rows">
+
       <div class="day-row">
         <span class="day-label">Mandag</span>
-        <div class="day-tasks"><span class="pill p-s">Fikse kjøkkenet</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-s">Fikse kjøkkenet</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Onsdag</span>
         <div class="day-tasks">
-          <span class="pill p-s">Støvsuge hele leiligheten</span>
-          <span class="pill p-s">Ta ut søpla</span>
+          <div class="task-item">
+            <span class="pill p-s">Støvsuge hele leiligheten</span>
+          </div>
+          <div class="task-item">
+            <span class="pill p-s">Ta ut søpla</span>
+          </div>
         </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Lørdag</span>
-        <div class="day-tasks"><span class="pill p-s">Handle på Grønland (partallsuker)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-s">Handle på Grønland</span>
+            <span class="task-note">Partallsuker</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Søndag</span>
-        <div class="day-tasks"><span class="pill p-s">Vaske badet (hver fjerde helg)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-s">Vaske badet</span>
+            <span class="task-note">Hver fjerde helg</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Genesis -->
-  <div class="person-card">
+  <!-- ═══════════════════════════════
+       GENESIS
+       ═══════════════════════════════ -->
+  <div class="person-card" id="genesis" data-color="#78350f">
     <div class="person-header">
       <div class="person-dot d-g"></div>
       <span class="person-name">Genesis</span>
     </div>
     <div class="day-rows">
+
       <div class="day-row">
         <span class="day-label">Tirsdag</span>
-        <div class="day-tasks"><span class="pill p-g">Fikse kjøkkenet</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-g">Fikse kjøkkenet</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Torsdag</span>
         <div class="day-tasks">
-          <span class="pill p-g">Støvsuge hele leiligheten</span>
-          <span class="pill p-g">Ta ut søpla</span>
+          <div class="task-item">
+            <span class="pill p-g">Støvsuge hele leiligheten</span>
+          </div>
+          <div class="task-item">
+            <span class="pill p-g">Ta ut søpla</span>
+          </div>
         </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Lørdag</span>
-        <div class="day-tasks"><span class="pill p-g">Handle på Grønland (oddetallsuker)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-g">Handle på Grønland</span>
+            <span class="task-note">Oddetallsuker</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Søndag</span>
-        <div class="day-tasks"><span class="pill p-g">Vaske badet (hver fjerde helg)</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-g">Vaske badet</span>
+            <span class="task-note">Hver fjerde helg</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <!-- Calvin -->
-  <div class="person-card">
+  <!-- ═══════════════════════════════
+       CALVIN
+       ═══════════════════════════════ -->
+  <div class="person-card" id="calvin" data-color="#3b0764">
     <div class="person-header">
       <div class="person-dot d-c"></div>
       <span class="person-name">Calvin</span>
     </div>
     <div class="day-rows">
+
       <div class="day-row">
         <span class="day-label">Tirsdag</span>
-        <div class="day-tasks"><span class="pill p-c">Moppe</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-c">Moppe</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Fredag</span>
         <div class="day-tasks">
-          <span class="pill p-c">Moppe</span>
-          <span class="pill p-c">Støvsuge hele leiligheten</span>
+          <div class="task-item">
+            <span class="pill p-c">Moppe</span>
+          </div>
+          <div class="task-item">
+            <span class="pill p-c">Støvsuge hele leiligheten</span>
+          </div>
         </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Lørdag</span>
-        <div class="day-tasks"><span class="pill p-c">Fikse kjøkkenet</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-c">Fikse kjøkkenet</span>
+          </div>
+        </div>
       </div>
+
       <div class="day-row">
         <span class="day-label">Søndag</span>
-        <div class="day-tasks"><span class="pill p-c">Fikse kjøkkenet</span></div>
+        <div class="day-tasks">
+          <div class="task-item">
+            <span class="pill p-c">Fikse kjøkkenet</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
-</div>
+</div><!-- /cards -->
 
 <p class="footer-note">
   ℹ️ Denne planen omfatter nødvendig husarbeid som skal utføres fast. Ved behov må alle regne med å hjelpe til — for eksempel med å ta ut søppel fredag, lørdag og søndag.
 </p>
+
+<script>
+  const people = ['isaac', 'lucy', 'sabela', 'genesis', 'calvin'];
+
+  function applyHash(hash) {
+    const person = hash.replace('#', '').toLowerCase();
+    const isValid = people.includes(person);
+    document.getElementById('showAllWrap').style.display = isValid ? 'block' : 'none';
+
+    document.querySelectorAll('.person-card').forEach(card => {
+      card.classList.remove('highlighted', 'dimmed');
+      card.style.removeProperty('--hl');
+      if (isValid) {
+        if (card.id === person) {
+          card.classList.add('highlighted');
+          card.style.setProperty('--hl', card.dataset.color);
+        } else {
+          card.classList.add('dimmed');
+        }
+      }
+    });
+  }
+
+  function showAll() {
+    history.pushState('', document.title, window.location.pathname + window.location.search);
+    applyHash('');
+  }
+
+  if (window.location.hash) {
+    applyHash(window.location.hash);
+    setTimeout(() => {
+      const t = document.querySelector(window.location.hash);
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+
+  window.addEventListener('hashchange', () => {
+    applyHash(window.location.hash);
+    setTimeout(() => {
+      const t = document.querySelector(window.location.hash);
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  });
+</script>
 
 </body>
 </html>

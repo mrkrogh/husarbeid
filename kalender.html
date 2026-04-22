@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f3ef;
+    padding: 40px;
+    width: 1100px;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 24px;
+  }
+  .legend {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+  .b-i { background: #dbeafe; color: #1e40af; }
+  .b-l { background: #fce7f3; color: #9d174d; }
+  .b-s { background: #d1fae5; color: #065f46; }
+  .b-g { background: #fef3c7; color: #92400e; }
+  .b-c { background: #ede9fe; color: #4c1d95; }
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 3px;
+  }
+  th {
+    background: #f0ede8;
+    color: #666;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 10px 8px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  th.name-col { text-align: left; padding-left: 14px; }
+  td {
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 8px 7px;
+    vertical-align: top;
+    min-height: 48px;
+    min-width: 110px;
+  }
+  td.name-cell {
+    background: #f0ede8;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    vertical-align: middle;
+    padding-left: 14px;
+    white-space: nowrap;
+  }
+  td.empty { background: #fafafa; }
+  .pill {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-bottom: 3px;
+    line-height: 1.3;
+  }
+  .p-i { background: #dbeafe; color: #1e40af; }
+  .p-l { background: #fce7f3; color: #9d174d; }
+  .p-s { background: #d1fae5; color: #065f46; }
+  .p-g { background: #fef3c7; color: #92400e; }
+  .p-c { background: #ede9fe; color: #4c1d95; }
+  .footer-note {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Husarbeidsplan</h1>
+  <div class="legend">
+    <span class="badge b-i">Isaac</span>
+    <span class="badge b-l">Lucy</span>
+    <span class="badge b-s">Sabela</span>
+    <span class="badge b-g">Genesis</span>
+    <span class="badge b-c">Calvin</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th class="name-col">Person</th>
+        <th>Mandag</th>
+        <th>Tirsdag</th>
+        <th>Onsdag</th>
+        <th>Torsdag</th>
+        <th>Fredag</th>
+        <th>Lørdag</th>
+        <th>Søndag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="name-cell">Isaac</td>
+        <td class="empty"></td>
+        <td><span class="pill p-i">Støvsuge hele leiligheten</span><span class="pill p-i">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-i">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-i">Handle på Grønland (oddetallsuker)</span></td>
+        <td><span class="pill p-i">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Lucy</td>
+        <td><span class="pill p-l">Støvsuge hele leiligheten</span><span class="pill p-l">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-l">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td><span class="pill p-l">Handle på Grønland (partallsuker)</span></td>
+        <td><span class="pill p-l">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Sabela</td>
+        <td><span class="pill p-s">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-s">Støvsuge hele leiligheten</span><span class="pill p-s">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td><span class="pill p-s">Handle på Grønland (partallsuker)</span></td>
+        <td><span class="pill p-s">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Genesis</td>
+        <td class="empty"></td>
+        <td><span class="pill p-g">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-g">Støvsuge hele leiligheten</span><span class="pill p-g">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-g">Handle på Grønland (oddetallsuker)</span></td>
+        <td><span class="pill p-g">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Calvin</td>
+        <td class="empty"></td>
+        <td><span class="pill p-c">Moppe</span></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td><span class="pill p-c">Moppe</span><span class="pill p-c">Støvsuge hele leiligheten</span></td>
+        <td><span class="pill p-c">Fikse kjøkkenet</span></td>
+        <td><span class="pill p-c">Fikse kjøkkenet</span></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="footer-note">Denne planen omfatter nødvendig husarbeid som skal utføres fast. Ved behov må alle regne med å hjelpe til. For eksempel med å ta ut søppel fredag, lørdag og søndag.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Husarbeidsplan</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0ece4;
+    --card: #ffffff;
+    --text: #1c1917;
+    --muted: #78716c;
+    --border: #e5e0d8;
+
+    --isaac-bg: #dbeafe; --isaac-fg: #1e3a8a;
+    --lucy-bg:  #fce7f3; --lucy-fg:  #831843;
+    --sabela-bg:#d1fae5; --sabela-fg:#064e3b;
+    --genesis-bg:#fef3c7; --genesis-fg:#78350f;
+    --calvin-bg:#ede9fe; --calvin-fg:#3b0764;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+    color: var(--text);
+  }
+
+  header {
+    max-width: 700px;
+    margin: 0 auto 28px;
+  }
+
+  header h1 {
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  header p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-width: 700px;
+    margin: 0 auto 20px;
+  }
+
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.03em;
+  }
+
+  .b-i { background: var(--isaac-bg);   color: var(--isaac-fg); }
+  .b-l { background: var(--lucy-bg);    color: var(--lucy-fg); }
+  .b-s { background: var(--sabela-bg);  color: var(--sabela-fg); }
+  .b-g { background: var(--genesis-bg); color: var(--genesis-fg); }
+  .b-c { background: var(--calvin-bg);  color: var(--calvin-fg); }
+
+  /* ── DESKTOP TABLE ── */
+  .table-wrap {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.07);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    background: #f5f2ed;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 12px 10px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th:first-child { text-align: left; padding-left: 18px; }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+
+  td {
+    padding: 10px 8px;
+    vertical-align: top;
+  }
+
+  td.name-cell {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+    padding-left: 18px;
+    white-space: nowrap;
+    vertical-align: middle;
+    background: #f9f7f4;
+    border-right: 1px solid var(--border);
+  }
+
+  td.empty { background: transparent; }
+
+  .pill {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .p-i { background: var(--isaac-bg);   color: var(--isaac-fg); }
+  .p-l { background: var(--lucy-bg);    color: var(--lucy-fg); }
+  .p-s { background: var(--sabela-bg);  color: var(--sabela-fg); }
+  .p-g { background: var(--genesis-bg); color: var(--genesis-fg); }
+  .p-c { background: var(--calvin-bg);  color: var(--calvin-fg); }
+
+  /* ── MOBILE CARDS ── */
+  .mobile-cards {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .person-card {
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  .person-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .person-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .d-i { background: var(--isaac-fg); }
+  .d-l { background: var(--lucy-fg); }
+  .d-s { background: var(--sabela-fg); }
+  .d-g { background: var(--genesis-fg); }
+  .d-c { background: var(--calvin-fg); }
+
+  .person-name {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .day-rows { padding: 8px 0; }
+
+  .day-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .day-row:last-child { border-bottom: none; }
+
+  .day-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    width: 52px;
+    flex-shrink: 0;
+    padding-top: 4px;
+  }
+
+  .day-tasks { display: flex; flex-direction: column; gap: 4px; flex: 1; }
+
+  .day-empty {
+    font-size: 12px;
+    color: #c5bfb8;
+    padding-top: 4px;
+  }
+
+  /* ── FOOTER ── */
+  .footer-note {
+    max-width: 700px;
+    margin: 24px auto 0;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+    padding: 0 4px;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 640px) {
+    .table-wrap { display: none; }
+    .mobile-cards { display: flex; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏠 Husarbeidsplan</h1>
+  <p>Ukentlig oversikt over hvem som gjør hva</p>
+</header>
+
+<div class="legend">
+  <span class="badge b-i">Isaac</span>
+  <span class="badge b-l">Lucy</span>
+  <span class="badge b-s">Sabela</span>
+  <span class="badge b-g">Genesis</span>
+  <span class="badge b-c">Calvin</span>
+</div>
+
+<!-- ── DESKTOP TABLE ── -->
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th style="text-align:left; padding-left:18px;">Person</th>
+        <th>Mandag</th>
+        <th>Tirsdag</th>
+        <th>Onsdag</th>
+        <th>Torsdag</th>
+        <th>Fredag</th>
+        <th>Lørdag</th>
+        <th>Søndag</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="name-cell">Isaac</td>
+        <td class="empty"></td>
+        <td><span class="pill p-i">Støvsuge hele leiligheten</span><span class="pill p-i">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-i">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-i">Handle på Grønland (oddetallsuker)</span></td>
+        <td><span class="pill p-i">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Lucy</td>
+        <td><span class="pill p-l">Støvsuge hele leiligheten</span><span class="pill p-l">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-l">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td><span class="pill p-l">Handle på Grønland (partallsuker)</span></td>
+        <td><span class="pill p-l">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Sabela</td>
+        <td><span class="pill p-s">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-s">Støvsuge hele leiligheten</span><span class="pill p-s">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td><span class="pill p-s">Handle på Grønland (partallsuker)</span></td>
+        <td><span class="pill p-s">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Genesis</td>
+        <td class="empty"></td>
+        <td><span class="pill p-g">Fikse kjøkkenet</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-g">Støvsuge hele leiligheten</span><span class="pill p-g">Ta ut søpla</span></td>
+        <td class="empty"></td>
+        <td><span class="pill p-g">Handle på Grønland (oddetallsuker)</span></td>
+        <td><span class="pill p-g">Vaske badet (hver fjerde helg)</span></td>
+      </tr>
+      <tr>
+        <td class="name-cell">Calvin</td>
+        <td class="empty"></td>
+        <td><span class="pill p-c">Moppe</span></td>
+        <td class="empty"></td>
+        <td class="empty"></td>
+        <td><span class="pill p-c">Moppe</span><span class="pill p-c">Støvsuge hele leiligheten</span></td>
+        <td><span class="pill p-c">Fikse kjøkkenet</span></td>
+        <td><span class="pill p-c">Fikse kjøkkenet</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ── MOBILE CARDS ── -->
+<div class="mobile-cards">
+
+  <!-- Isaac -->
+  <div class="person-card">
+    <div class="person-header">
+      <div class="person-dot d-i"></div>
+      <span class="person-name">Isaac</span>
+    </div>
+    <div class="day-rows">
+      <div class="day-row">
+        <span class="day-label">Tirsdag</span>
+        <div class="day-tasks">
+          <span class="pill p-i">Støvsuge hele leiligheten</span>
+          <span class="pill p-i">Ta ut søpla</span>
+        </div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Torsdag</span>
+        <div class="day-tasks"><span class="pill p-i">Fikse kjøkkenet</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Lørdag</span>
+        <div class="day-tasks"><span class="pill p-i">Handle på Grønland (oddetallsuker)</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Søndag</span>
+        <div class="day-tasks"><span class="pill p-i">Vaske badet (hver fjerde helg)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lucy -->
+  <div class="person-card">
+    <div class="person-header">
+      <div class="person-dot d-l"></div>
+      <span class="person-name">Lucy</span>
+    </div>
+    <div class="day-rows">
+      <div class="day-row">
+        <span class="day-label">Mandag</span>
+        <div class="day-tasks">
+          <span class="pill p-l">Støvsuge hele leiligheten</span>
+          <span class="pill p-l">Ta ut søpla</span>
+        </div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Onsdag</span>
+        <div class="day-tasks"><span class="pill p-l">Fikse kjøkkenet</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Lørdag</span>
+        <div class="day-tasks"><span class="pill p-l">Handle på Grønland (partallsuker)</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Søndag</span>
+        <div class="day-tasks"><span class="pill p-l">Vaske badet (hver fjerde helg)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sabela -->
+  <div class="person-card">
+    <div class="person-header">
+      <div class="person-dot d-s"></div>
+      <span class="person-name">Sabela</span>
+    </div>
+    <div class="day-rows">
+      <div class="day-row">
+        <span class="day-label">Mandag</span>
+        <div class="day-tasks"><span class="pill p-s">Fikse kjøkkenet</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Onsdag</span>
+        <div class="day-tasks">
+          <span class="pill p-s">Støvsuge hele leiligheten</span>
+          <span class="pill p-s">Ta ut søpla</span>
+        </div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Lørdag</span>
+        <div class="day-tasks"><span class="pill p-s">Handle på Grønland (partallsuker)</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Søndag</span>
+        <div class="day-tasks"><span class="pill p-s">Vaske badet (hver fjerde helg)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Genesis -->
+  <div class="person-card">
+    <div class="person-header">
+      <div class="person-dot d-g"></div>
+      <span class="person-name">Genesis</span>
+    </div>
+    <div class="day-rows">
+      <div class="day-row">
+        <span class="day-label">Tirsdag</span>
+        <div class="day-tasks"><span class="pill p-g">Fikse kjøkkenet</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Torsdag</span>
+        <div class="day-tasks">
+          <span class="pill p-g">Støvsuge hele leiligheten</span>
+          <span class="pill p-g">Ta ut søpla</span>
+        </div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Lørdag</span>
+        <div class="day-tasks"><span class="pill p-g">Handle på Grønland (oddetallsuker)</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Søndag</span>
+        <div class="day-tasks"><span class="pill p-g">Vaske badet (hver fjerde helg)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calvin -->
+  <div class="person-card">
+    <div class="person-header">
+      <div class="person-dot d-c"></div>
+      <span class="person-name">Calvin</span>
+    </div>
+    <div class="day-rows">
+      <div class="day-row">
+        <span class="day-label">Tirsdag</span>
+        <div class="day-tasks"><span class="pill p-c">Moppe</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Fredag</span>
+        <div class="day-tasks">
+          <span class="pill p-c">Moppe</span>
+          <span class="pill p-c">Støvsuge hele leiligheten</span>
+        </div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Lørdag</span>
+        <div class="day-tasks"><span class="pill p-c">Fikse kjøkkenet</span></div>
+      </div>
+      <div class="day-row">
+        <span class="day-label">Søndag</span>
+        <div class="day-tasks"><span class="pill p-c">Fikse kjøkkenet</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="footer-note">
+  ℹ️ Denne planen omfatter nødvendig husarbeid som skal utføres fast. Ved behov må alle regne med å hjelpe til — for eksempel med å ta ut søppel fredag, lørdag og søndag.
+</p>
+
+</body>
+</html>

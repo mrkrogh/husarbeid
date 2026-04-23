@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Husarbeidsplan — Logg</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f0ece4;
+    --card: #ffffff;
+    --text: #1c1917;
+    --muted: #78716c;
+    --border: #e5e0d8;
+
+    --isaac-bg: #dbeafe; --isaac-fg: #1e3a8a;
+    --lucy-bg:  #fce7f3; --lucy-fg:  #831843;
+    --sabela-bg:#d1fae5; --sabela-fg:#064e3b;
+    --genesis-bg:#fef3c7; --genesis-fg:#78350f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 32px 16px 64px;
+    color: var(--text);
+  }
+
+  header { max-width: 900px; margin: 0 auto 8px; }
+  header h1 { font-size: clamp(20px, 4vw, 26px); font-weight: 600; letter-spacing: -0.5px; }
+  header p { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+  .back-link {
+    display: inline-block;
+    max-width: 900px;
+    margin: 0 auto 24px;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--text); }
+
+  .sections {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-size: 13px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--muted); margin-bottom: 12px;
+  }
+
+  /* ── LOG TABLE ── */
+  .log-card {
+    background: var(--card);
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    background: #f5f2ed;
+    font-size: 10px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted); padding: 10px 16px;
+    text-align: left; border-bottom: 1px solid var(--border);
+  }
+
+  tbody tr { border-bottom: 1px solid var(--border); }
+  tbody tr:last-child { border-bottom: none; }
+
+  td { padding: 10px 16px; font-size: 12px; vertical-align: middle; }
+
+  td.col-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--muted);
+    white-space: nowrap; width: 90px;
+  }
+
+  td.col-person { width: 90px; }
+
+  .person-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; font-weight: 500;
+    padding: 3px 10px; border-radius: 999px;
+    display: inline-block;
+  }
+  .pb-isaac   { background: var(--isaac-bg);   color: var(--isaac-fg); }
+  .pb-lucy    { background: var(--lucy-bg);    color: var(--lucy-fg); }
+  .pb-sabela  { background: var(--sabela-bg);  color: var(--sabela-fg); }
+  .pb-genesis { background: var(--genesis-bg); color: var(--genesis-fg); }
+
+  td.col-task { color: var(--text); }
+  td.col-type { color: var(--muted); font-size: 11px; }
+
+  .empty-state {
+    padding: 24px 16px;
+    font-size: 13px; color: var(--muted);
+    font-style: italic; text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📋 Husarbeidslogg</h1>
+  <p>Oversikt over fullførte oppgaver</p>
+  <p style="font-size:12px; color:var(--muted); margin-top:8px; line-height:1.6;">Hvis noen har byttet dager, vises det ikke i denne oversikten. Her vises bare hvilke datoer og oppgaver hver person har blitt tildelt.</p>
+</header>
+<a class="back-link" href="index.html">← Tilbake til planen</a>
+
+<div class="sections" id="sections">
+  <!-- Filled by JS -->
+</div>
+
+<script>
+  // ═══════════════════════════════════════════════════════
+  //  DATAKILDE — hold synkronisert med data.js
+  // ═══════════════════════════════════════════════════════
+  const HUSPLAN = {
+    gronland: {
+      isaac:   { start: '01.05.2026', interval: 14 },
+      lucy:    { start: '08.05.2026', interval: 14 },
+      sabela:  { start: '08.05.2026', interval: 14 },
+      genesis: { start: '01.05.2026', interval: 14 },
+    },
+    bad: {
+      isaac:   { start: '26.04.2026', interval: 28, firstLabel: 'dusjen'  },
+      lucy:    { start: '26.04.2026', interval: 28, firstLabel: 'speilet' },
+      sabela:  { start: '10.05.2026', interval: 28, firstLabel: 'speilet' },
+      genesis: { start: '10.05.2026', interval: 28, firstLabel: 'dusjen'  },
+    },
+    navn:   { isaac: 'Isaac', lucy: 'Lucy', sabela: 'Sabela', genesis: 'Genesis' },
+    labels: { dusjen: 'Dusjen osv.', speilet: 'Speilet osv.' },
+  };
+
+  function parseDate(str) {
+    const [d, m, y] = str.split('.').map(Number);
+    return new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  }
+  function formatDate(date) {
+    return String(date.getUTCDate()).padStart(2,'0') + '.' +
+           String(date.getUTCMonth()+1).padStart(2,'0') + '.' +
+           date.getUTCFullYear();
+  }
+  function getToday() {
+    const n = new Date();
+    return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate(), 12, 0, 0));
+  }
+  function addDays(date, days) {
+    return new Date(date.getTime() + days * 86400000);
+  }
+  // ── HELPERS ──
+  function parseDate(str) {
+    const [d, m, y] = str.split('.').map(Number);
+    return new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  }
+
+  function formatDate(str) {
+    // Already DD.MM.YYYY — just return as-is
+    return str;
+  }
+
+  function getToday() {
+    const n = new Date();
+    return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate(), 12, 0, 0));
+  }
+
+  // ── BUILD LOG ──
+  const today = getToday();
+  const people = ['isaac', 'lucy', 'sabela', 'genesis'];
+
+  // Collect all past entries across both task types
+  // Entry: { date (Date), dateStr, person, task, detail }
+  const entries = [];
+
+  people.forEach(person => {
+    // Bad dates — auto-generate up to today
+    const badCfg = HUSPLAN.bad[person];
+    const labelsArr = ['dusjen', 'speilet'];
+    const firstIdx = labelsArr.indexOf(badCfg.firstLabel);
+    let cursor = parseDate(badCfg.start);
+    let i = 0;
+    while (cursor < today) {
+      entries.push({
+        date: new Date(cursor),
+        dateStr: formatDate(cursor),
+        person,
+        task: 'Vaske badet',
+        detail: HUSPLAN.labels[labelsArr[(firstIdx + i) % 2]],
+      });
+      cursor = addDays(cursor, badCfg.interval);
+      i++;
+    }
+
+    // Grønland dates — generate up to today
+    const gCfg = HUSPLAN.gronland[person];
+    cursor = parseDate(gCfg.start);
+    while (cursor < today) {
+      entries.push({
+        date: new Date(cursor),
+        dateStr: formatDate(cursor),
+        person,
+        task: 'Handle på Grønland',
+        detail: '',
+      });
+      cursor = addDays(cursor, gCfg.interval);
+    }
+  });
+
+  // Sort by date descending (newest first)
+  entries.sort((a, b) => b.date - a.date);
+
+  // ── RENDER ──
+  const sections = document.getElementById('sections');
+
+  if (entries.length === 0) {
+    sections.innerHTML = '<p style="color:var(--muted);font-size:13px;">Ingen fullførte oppgaver ennå.</p>';
+  } else {
+    // Group by month
+    const byMonth = {};
+    entries.forEach(e => {
+      const key = `${e.date.getUTCFullYear()}-${String(e.date.getUTCMonth()+1).padStart(2,'0')}`;
+      if (!byMonth[key]) byMonth[key] = [];
+      byMonth[key].push(e);
+    });
+
+    const monthNames = ['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
+
+    Object.keys(byMonth).sort().reverse().forEach(key => {
+      const [y, m] = key.split('-');
+      const title = monthNames[parseInt(m,10)-1] + ' ' + y;
+      const rows = byMonth[key].map(e => `
+        <tr>
+          <td class="col-date">${formatDate(e.dateStr)}</td>
+          <td class="col-person"><span class="person-badge pb-${e.person}">${HUSPLAN.navn[e.person]}</span></td>
+          <td class="col-task">${e.task}</td>
+          <td class="col-type">${e.detail}</td>
+        </tr>
+      `).join('');
+
+      sections.innerHTML += `
+        <div>
+          <div class="section-title">${title}</div>
+          <div class="log-card">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dato</th>
+                  <th>Person</th>
+                  <th>Oppgave</th>
+                  <th>Detalj</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    });
+  }
+</script>
+
+</body>
+</html>

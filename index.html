@@ -127,15 +127,13 @@
   }
   .date-list li .t { color: var(--muted); }
 
-  /* Next */
-  .date-list li.date-next .d { color: var(--text); font-weight: 600; }
-  .date-list li.date-next::before {
-    content: 'Neste';
-    font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 600;
-    letter-spacing: 0.05em; text-transform: uppercase;
-    background: var(--text); color: #fff;
-    padding: 1px 6px; border-radius: 4px; flex-shrink: 0; align-self: center;
+  /* Next — subtle left accent instead of heavy tag */
+  .date-list li.date-next {
+    padding-left: 8px;
+    border-left: 2px solid var(--text);
+    margin-left: -10px;
   }
+  .date-list li.date-next .d { color: var(--text); font-weight: 600; }
 
   /* Empty state */
   .date-empty {
@@ -176,9 +174,8 @@
   .summary {
     max-width: 560px;
     margin: 0 auto 20px;
-    background: var(--card);
+    background: #1c1917;
     border-radius: 14px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
     overflow: hidden;
   }
   @media (min-width: 700px) { .summary { max-width: 900px; } }
@@ -188,7 +185,7 @@
     align-items: flex-start;
     gap: 12px;
     padding: 11px 16px;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .summary-row:last-child { border-bottom: none; }
 
@@ -196,7 +193,7 @@
     font-family: 'DM Mono', monospace;
     font-size: 10px; font-weight: 600;
     text-transform: uppercase; letter-spacing: 0.05em;
-    color: var(--muted);
+    color: rgba(255,255,255,0.55);
     width: 80px; flex-shrink: 0;
     padding-top: 3px;
   }
@@ -204,27 +201,18 @@
   .summary-content {
     font-size: 12px;
     line-height: 1.6;
-    color: var(--text);
+    color: rgba(255,255,255,0.9);
     flex: 1;
   }
 
   .summary-content .nobody {
-    color: var(--muted);
+    color: rgba(255,255,255,0.55);
     font-style: italic;
   }
 
-  .summary-person {
-    display: block;
-    margin-bottom: 1px;
-  }
-
-  .summary-person .sname {
-    font-weight: 600;
-  }
-
-  .summary-person .stasks {
-    color: var(--muted);
-  }
+  .summary-person { display: block; margin-bottom: 1px; }
+  .summary-person .sname { font-weight: 600; color: #fff; }
+  .summary-person .stasks { color: rgba(255,255,255,0.85); }
 </style>
 </head>
 <body>
@@ -547,7 +535,7 @@
       while (cursor < today) cursor = addDays(cursor, cfg.interval);
 
       var html = '', count = 0;
-      while (cursor <= cutoff) {
+      while (cursor <= cutoff && count < 3) {
         html += '<li class="' + (count === 0 ? 'show date-next' : 'show') + '">' +
                 '<span class="d">' + formatDate(cursor) + '</span></li>';
         cursor = addDays(cursor, cfg.interval);
@@ -623,112 +611,95 @@
 
   // ── BUILD TODAY SUMMARY ──
   function buildSummary() {
-    const today = getToday();
-    const dow = today.getUTCDay(); // 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+    const today    = getToday();
+    const tomorrow = addDays(today, 1);
+    const dow      = today.getUTCDay(); // 0=Sun,1=Mon…6=Sat
+    const dowTom   = tomorrow.getUTCDay();
 
-    // Fixed weekly tasks per weekday (0=Sun … 6=Sat)
     const weeklyTasks = {
-      1: [ // Mandag
-        { person: 'lucy',   tasks: ['Støvsuge', 'Ta ut søpla'] },
-        { person: 'sabela', tasks: ['Fikse kjøkkenet'] },
-      ],
-      2: [ // Tirsdag
-        { person: 'isaac',   tasks: ['Støvsuge', 'Ta ut søpla'] },
-        { person: 'genesis', tasks: ['Fikse kjøkkenet'] },
-      ],
-      3: [ // Onsdag
-        { person: 'lucy',   tasks: ['Fikse kjøkkenet'] },
-        { person: 'sabela', tasks: ['Støvsuge', 'Ta ut søpla'] },
-      ],
-      4: [ // Torsdag
-        { person: 'isaac',   tasks: ['Fikse kjøkkenet'] },
-        { person: 'genesis', tasks: ['Støvsuge', 'Ta ut søpla'] },
-      ],
+      1: [ { person: 'lucy',    tasks: ['Støvsuge', 'Ta ut søpla'] }, { person: 'sabela',  tasks: ['Fikse kjøkkenet'] } ],
+      2: [ { person: 'isaac',   tasks: ['Støvsuge', 'Ta ut søpla'] }, { person: 'genesis', tasks: ['Fikse kjøkkenet'] } ],
+      3: [ { person: 'lucy',    tasks: ['Fikse kjøkkenet'] },          { person: 'sabela',  tasks: ['Støvsuge', 'Ta ut søpla'] } ],
+      4: [ { person: 'isaac',   tasks: ['Fikse kjøkkenet'] },          { person: 'genesis', tasks: ['Støvsuge', 'Ta ut søpla'] } ],
     };
 
-    // Helper: next weekday on or after a given date
     function nextWeekday(fromDate, targetDow) {
       let d = new Date(fromDate);
       while (d.getUTCDay() !== targetDow) d = addDays(d, 1);
       return d;
     }
 
-    // ── I DAG ──
-    const todayEntries = weeklyTasks[dow] || [];
-    let todayHtml;
-    if (todayEntries.length === 0) {
-      todayHtml = '<span class="nobody">Ingen faste oppgaver i dag</span>';
-    } else {
-      todayHtml = todayEntries.map(function(e) {
-        return '<span class="summary-person">' +
-          '<span class="sname">' + HUSPLAN.navn[e.person] + ':</span> ' +
-          '<span class="stasks">' + e.tasks.join(', ') + '</span>' +
-          '</span>';
-      }).join('');
-    }
-
-    // ── KOMMENDE LØRDAG ──
-    const nextSat = nextWeekday(today, 6);
-    const gronlandPersons = ['isaac', 'lucy', 'sabela', 'genesis'].filter(function(p) {
-      const cfg = HUSPLAN.gronland[p];
-      let cursor = parseDate(cfg.start);
-      while (cursor < nextSat) cursor = addDays(cursor, cfg.interval);
-      return cursor.getTime() === nextSat.getTime();
-    });
-    const gronlandHtml = gronlandPersons.length > 0
-      ? gronlandPersons.map(function(p) {
+    function renderDayTasks(dayOfWeek, date) {
+      // Check fixed tasks
+      const fixed = weeklyTasks[dayOfWeek] || [];
+      if (fixed.length > 0) {
+        return fixed.map(function(e) {
           return '<span class="summary-person">' +
-            '<span class="sname">' + HUSPLAN.navn[p] + '</span>' +
-            '</span>';
-        }).join('') + '<span class="stasks" style="display:block;margin-top:1px;">Handle på Grønland</span>'
-      : '<span class="nobody">Ingen handler denne lørdagen</span>';
-
-    // ── KOMMENDE SØNDAG ──
-    const nextSun = nextWeekday(today, 0);
-    const badPersons = ['isaac', 'lucy', 'sabela', 'genesis'].filter(function(p) {
-      // Generate enough entries and check if any land on nextSun
-      const entries = generateBadEntries(p, 60);
-      return entries.some(function(e) {
-        return e.date.getTime() === nextSun.getTime();
-      });
-    });
-    let sundayHtml;
-    if (badPersons.length > 0) {
-      sundayHtml = badPersons.map(function(p) {
-        // Find the label for that specific date
-        const entries = generateBadEntries(p, 60);
-        const match = entries.find(function(e) { return e.date.getTime() === nextSun.getTime(); });
-        return '<span class="summary-person">' +
-          '<span class="sname">' + HUSPLAN.navn[p] + ':</span> ' +
-          '<span class="stasks">' + (HUSPLAN.labels[match.label] || '') + '</span>' +
-          '</span>';
-      }).join('');
-    } else {
-      sundayHtml = '<span class="nobody">Badet skal ikke vaskes denne helgen</span>';
+            '<span class="sname">' + HUSPLAN.navn[e.person] + ':</span> ' +
+            '<span class="stasks">' + e.tasks.join(', ') + '</span></span>';
+        }).join('');
+      }
+      // Check Grønland (Saturday = 6)
+      if (dayOfWeek === 6) {
+        const persons = ['isaac','lucy','sabela','genesis'].filter(function(p) {
+          const cfg = HUSPLAN.gronland[p];
+          let c = parseDate(cfg.start);
+          while (c < date) c = addDays(c, cfg.interval);
+          return c.getTime() === date.getTime();
+        });
+        if (persons.length > 0) {
+          return persons.map(function(p) {
+            return '<span class="summary-person"><span class="sname">' + HUSPLAN.navn[p] + '</span></span>';
+          }).join('') + '<span class="summary-person"><span class="sname">Handle på Grønland</span></span>';
+        }
+        return '<span class="nobody">Ingen handler denne lørdagen</span>';
+      }
+      // Check bad (Sunday = 0)
+      if (dayOfWeek === 0) {
+        const persons = ['isaac','lucy','sabela','genesis'].filter(function(p) {
+          return generateBadEntries(p, 60).some(function(e) { return e.date.getTime() === date.getTime(); });
+        });
+        if (persons.length > 0) {
+          return persons.map(function(p) {
+            const match = generateBadEntries(p, 60).find(function(e) { return e.date.getTime() === date.getTime(); });
+            return '<span class="summary-person"><span class="sname">' + HUSPLAN.navn[p] + ':</span> ' +
+              '<span class="stasks">' + (HUSPLAN.labels[match.label] || '') + '</span></span>';
+          }).join('');
+        }
+        return '<span class="nobody">Badet skal ikke vaskes denne søndagen</span>';
+      }
+      return '<span class="nobody">Ingen faste oppgaver</span>';
     }
 
-    // ── RENDER ──
-    // If today is Saturday, show today's bath instead of "kommende søndag"
-    // If today is Sunday, show today's bath as "i dag"
-    const labels = {
-      today:  'I dag',
-      lordag: dow === 6 ? 'I dag' : 'Lørdag',
-      sondag: dow === 0 ? 'I dag' : 'Søndag',
-    };
+    // Day names
+    const dagNavn = ['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
 
-    document.getElementById('summary').innerHTML =
-      '<div class="summary-row">' +
-        '<span class="summary-label">' + labels.today + '</span>' +
-        '<div class="summary-content">' + todayHtml + '</div>' +
-      '</div>' +
-      '<div class="summary-row">' +
-        '<span class="summary-label">' + labels.lordag + '</span>' +
-        '<div class="summary-content">' + gronlandHtml + '</div>' +
-      '</div>' +
-      '<div class="summary-row">' +
-        '<span class="summary-label">' + labels.sondag + '</span>' +
-        '<div class="summary-content">' + sundayHtml + '</div>' +
-      '</div>';
+    // Build rows: always show today + tomorrow.
+    // Show next Saturday if not already covered by today/tomorrow.
+    // Show next Sunday if not already covered by today/tomorrow.
+    const rows = [];
+
+    rows.push({ label: 'I dag',      html: renderDayTasks(dow, today) });
+    rows.push({ label: 'I morgen',   html: renderDayTasks(dowTom, tomorrow) });
+
+    // Next Saturday (skip if today or tomorrow is Saturday)
+    if (dow !== 6 && dowTom !== 6) {
+      const nextSat = nextWeekday(today, 6);
+      rows.push({ label: dagNavn[6], html: renderDayTasks(6, nextSat) });
+    }
+
+    // Next Sunday (skip if today or tomorrow is Sunday)
+    if (dow !== 0 && dowTom !== 0) {
+      const nextSun = nextWeekday(today, 0);
+      rows.push({ label: dagNavn[0], html: renderDayTasks(0, nextSun) });
+    }
+
+    document.getElementById('summary').innerHTML = rows.map(function(r) {
+      return '<div class="summary-row">' +
+        '<span class="summary-label">' + r.label + '</span>' +
+        '<div class="summary-content">' + r.html + '</div>' +
+        '</div>';
+    }).join('');
   }
 
   // ── INIT ──

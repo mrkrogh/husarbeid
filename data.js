@@ -10,10 +10,10 @@ const HUSPLAN = {
   // start: første dato i serien (DD.MM.YYYY)
   // interval: antall dager mellom hver gang
   gronland: {
-    isaac:   { start: '01.05.2026', interval: 14 },
-    lucy:    { start: '08.05.2026', interval: 14 },
-    sabela:  { start: '08.05.2026', interval: 14 },
-    genesis: { start: '01.05.2026', interval: 14 },
+    isaac:   { start: '02.05.2026', interval: 14 },
+    lucy:    { start: '25.04.2026', interval: 14 },
+    sabela:  { start: '25.04.2026', interval: 14 },
+    genesis: { start: '02.05.2026', interval: 14 },
   },
 
   // ── VASKE BADET ──
@@ -22,9 +22,9 @@ const HUSPLAN = {
   // firstLabel: oppgaven den FØRSTE gangen ("dusjen" eller "speilet")
   //             Neste gang blir automatisk den andre, så veksler det i all evighet.
   bad: {
-    isaac:   { start: '26.04.2026', interval: 28, firstLabel: 'dusjen'  },
+    isaac:   { start: '10.05.2026', interval: 28, firstLabel: 'speilet' },
     lucy:    { start: '26.04.2026', interval: 28, firstLabel: 'speilet' },
-    sabela:  { start: '10.05.2026', interval: 28, firstLabel: 'speilet' },
+    sabela:  { start: '26.04.2026', interval: 28, firstLabel: 'dusjen'  },
     genesis: { start: '10.05.2026', interval: 28, firstLabel: 'dusjen'  },
   },
 

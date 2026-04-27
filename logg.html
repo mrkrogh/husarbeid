@@ -13,7 +13,6 @@
     --text: #1c1917;
     --muted: #78716c;
     --border: #e5e0d8;
-
     --isaac-bg: #dbeafe; --isaac-fg: #1e3a8a;
     --lucy-bg:  #fce7f3; --lucy-fg:  #831843;
     --sabela-bg:#d1fae5; --sabela-fg:#064e3b;
@@ -30,14 +29,30 @@
     color: var(--text);
   }
 
-  header { max-width: 900px; margin: 0 auto 8px; }
+  header { max-width: 700px; margin: 0 auto 6px; }
   header h1 { font-size: clamp(20px, 4vw, 26px); font-weight: 600; letter-spacing: -0.5px; }
-  header p { font-size: 13px; color: var(--muted); margin-top: 5px; }
+
+  .subtitle {
+    max-width: 700px;
+    margin: 0 auto 6px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .disclaimer {
+    max-width: 700px;
+    margin: 0 auto 20px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
 
   .back-link {
     display: inline-block;
-    max-width: 900px;
-    margin: 0 auto 24px;
+    max-width: 700px;
+    margin: 0 auto 28px;
     font-size: 12px;
     color: var(--muted);
     text-decoration: none;
@@ -49,18 +64,21 @@
   .sections {
     display: flex;
     flex-direction: column;
-    gap: 32px;
-    max-width: 900px;
+    gap: 28px;
+    max-width: 700px;
     margin: 0 auto;
   }
 
-  .section-title {
-    font-size: 13px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.05em;
-    color: var(--muted); margin-bottom: 12px;
+  .month-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--muted);
+    margin-bottom: 10px;
   }
 
-  /* ── LOG TABLE ── */
   .log-card {
     background: var(--card);
     border-radius: 16px;
@@ -68,47 +86,52 @@
     overflow: hidden;
   }
 
-  table { width: 100%; border-collapse: collapse; }
+  .log-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .log-row:last-child { border-bottom: none; }
 
-  thead th {
-    background: #f5f2ed;
-    font-size: 10px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--muted); padding: 10px 16px;
-    text-align: left; border-bottom: 1px solid var(--border);
+  .log-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    width: 76px;
   }
 
-  tbody tr { border-bottom: 1px solid var(--border); }
-  tbody tr:last-child { border-bottom: none; }
-
-  td { padding: 10px 16px; font-size: 12px; vertical-align: middle; }
-
-  td.col-date {
+  .log-badge {
     font-family: 'DM Mono', monospace;
-    font-size: 11px; color: var(--muted);
-    white-space: nowrap; width: 90px;
-  }
-
-  td.col-person { width: 90px; }
-
-  .person-badge {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px; font-weight: 500;
-    padding: 3px 10px; border-radius: 999px;
-    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    flex-shrink: 0;
   }
   .pb-isaac   { background: var(--isaac-bg);   color: var(--isaac-fg); }
   .pb-lucy    { background: var(--lucy-bg);    color: var(--lucy-fg); }
   .pb-sabela  { background: var(--sabela-bg);  color: var(--sabela-fg); }
   .pb-genesis { background: var(--genesis-bg); color: var(--genesis-fg); }
 
-  td.col-task { color: var(--text); }
-  td.col-type { color: var(--muted); font-size: 11px; }
+  .log-task {
+    font-size: 12px;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .log-detail {
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
 
   .empty-state {
-    padding: 24px 16px;
-    font-size: 13px; color: var(--muted);
-    font-style: italic; text-align: center;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
   }
 </style>
 </head>
@@ -116,19 +139,17 @@
 
 <header>
   <h1>📋 Husarbeidslogg</h1>
-  <p>Oversikt over fullførte oppgaver</p>
-  <p style="font-size:12px; color:var(--muted); margin-top:8px; line-height:1.6;">Hvis noen har byttet dager, vises det ikke i denne oversikten. Her vises bare hvilke datoer og oppgaver hver person har blitt tildelt.</p>
 </header>
+<p class="subtitle">Oversikt over fullførte oppgaver</p>
+<p class="disclaimer">Hvis noen har byttet dager, vises det ikke i denne oversikten. Her vises bare hvilke datoer og oppgaver hver person har blitt tildelt.</p>
 <a class="back-link" href="index.html">← Tilbake til planen</a>
 
-<div class="sections" id="sections">
-  <!-- Filled by JS -->
-</div>
+<div class="sections" id="sections"></div>
 
 <script>
-  // ═══════════════════════════════════════════════════════
-  //  DATAKILDE — hold synkronisert med data.js
-  // ═══════════════════════════════════════════════════════
+  // ═══════════════════════════════════════════════════
+  //  DATAKILDE — hold synkronisert med index.html
+  // ═══════════════════════════════════════════════════
   const HUSPLAN = {
     gronland: {
       isaac:   { start: '02.05.2026', interval: 14 },
@@ -146,31 +167,16 @@
     labels: { dusjen: 'Dusjen osv.', speilet: 'Speilet osv.' },
   };
 
-  function parseDate(str) {
-    const [d, m, y] = str.split('.').map(Number);
-    return new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
-  }
-  function formatDate(date) {
-    return String(date.getUTCDate()).padStart(2,'0') + '.' +
-           String(date.getUTCMonth()+1).padStart(2,'0') + '.' +
-           date.getUTCFullYear();
-  }
-  function getToday() {
-    const n = new Date();
-    return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate(), 12, 0, 0));
-  }
-  function addDays(date, days) {
-    return new Date(date.getTime() + days * 86400000);
-  }
   // ── HELPERS ──
   function parseDate(str) {
     const [d, m, y] = str.split('.').map(Number);
     return new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
   }
 
-  function formatDate(str) {
-    // Already DD.MM.YYYY — just return as-is
-    return str;
+  function fmtDate(date) {
+    return String(date.getUTCDate()).padStart(2, '0') + '.' +
+           String(date.getUTCMonth() + 1).padStart(2, '0') + '.' +
+           date.getUTCFullYear();
   }
 
   function getToday() {
@@ -178,97 +184,92 @@
     return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate(), 12, 0, 0));
   }
 
-  // ── BUILD LOG ──
-  const today = getToday();
-  const people = ['isaac', 'lucy', 'sabela', 'genesis'];
+  function addDays(date, days) {
+    return new Date(date.getTime() + days * 86400000);
+  }
 
-  // Collect all past entries across both task types
-  // Entry: { date (Date), dateStr, person, task, detail }
+  // ── COLLECT ENTRIES ──
+  const today   = getToday();
+  const logFrom = parseDate('27.04.2026'); // Vis kun fra og med denne datoen
+  const people  = ['isaac', 'lucy', 'sabela', 'genesis'];
   const entries = [];
 
-  people.forEach(person => {
-    // Bad dates — auto-generate up to today
-    const badCfg = HUSPLAN.bad[person];
-    const labelsArr = ['dusjen', 'speilet'];
-    const firstIdx = labelsArr.indexOf(badCfg.firstLabel);
+  people.forEach(function(person) {
+    // Vaske badet
+    const badCfg   = HUSPLAN.bad[person];
+    const labArr   = ['dusjen', 'speilet'];
+    const firstIdx = labArr.indexOf(badCfg.firstLabel);
     let cursor = parseDate(badCfg.start);
     let i = 0;
     while (cursor < today) {
-      entries.push({
-        date: new Date(cursor),
-        dateStr: formatDate(cursor),
-        person,
-        task: 'Vaske badet',
-        detail: HUSPLAN.labels[labelsArr[(firstIdx + i) % 2]],
-      });
+      if (cursor >= logFrom) {
+        entries.push({
+          date:   new Date(cursor),
+          dateStr: fmtDate(cursor),
+          person,
+          task:   'Vaske badet',
+          detail: HUSPLAN.labels[labArr[(firstIdx + i) % 2]],
+        });
+      }
       cursor = addDays(cursor, badCfg.interval);
       i++;
     }
 
-    // Grønland dates — generate up to today
+    // Handle på Grønland
     const gCfg = HUSPLAN.gronland[person];
     cursor = parseDate(gCfg.start);
     while (cursor < today) {
-      entries.push({
-        date: new Date(cursor),
-        dateStr: formatDate(cursor),
-        person,
-        task: 'Handle på Grønland',
-        detail: '',
-      });
+      if (cursor >= logFrom) {
+        entries.push({
+          date:   new Date(cursor),
+          dateStr: fmtDate(cursor),
+          person,
+          task:   'Handle på Grønland',
+          detail: '',
+        });
+      }
       cursor = addDays(cursor, gCfg.interval);
     }
   });
 
-  // Sort by date descending (newest first)
-  entries.sort((a, b) => b.date - a.date);
+  // Sort newest first
+  entries.sort(function(a, b) { return b.date - a.date; });
 
   // ── RENDER ──
   const sections = document.getElementById('sections');
 
   if (entries.length === 0) {
-    sections.innerHTML = '<p style="color:var(--muted);font-size:13px;">Ingen fullførte oppgaver ennå.</p>';
+    sections.innerHTML = '<p class="empty-state">Ingen fullførte oppgaver ennå.</p>';
   } else {
-    // Group by month
     const byMonth = {};
-    entries.forEach(e => {
-      const key = `${e.date.getUTCFullYear()}-${String(e.date.getUTCMonth()+1).padStart(2,'0')}`;
+    entries.forEach(function(e) {
+      const key = e.date.getUTCFullYear() + '-' +
+                  String(e.date.getUTCMonth() + 1).padStart(2, '0');
       if (!byMonth[key]) byMonth[key] = [];
       byMonth[key].push(e);
     });
 
-    const monthNames = ['januar','februar','mars','april','mai','juni','juli','august','september','oktober','november','desember'];
+    const monthNames = ['Januar','Februar','Mars','April','Mai','Juni',
+                        'Juli','August','September','Oktober','November','Desember'];
 
-    Object.keys(byMonth).sort().reverse().forEach(key => {
-      const [y, m] = key.split('-');
-      const title = monthNames[parseInt(m,10)-1] + ' ' + y;
-      const rows = byMonth[key].map(e => `
-        <tr>
-          <td class="col-date">${formatDate(e.dateStr)}</td>
-          <td class="col-person"><span class="person-badge pb-${e.person}">${HUSPLAN.navn[e.person]}</span></td>
-          <td class="col-task">${e.task}</td>
-          <td class="col-type">${e.detail}</td>
-        </tr>
-      `).join('');
+    Object.keys(byMonth).sort().reverse().forEach(function(key) {
+      const parts = key.split('-');
+      const title = monthNames[parseInt(parts[1], 10) - 1] + ' ' + parts[0];
 
-      sections.innerHTML += `
-        <div>
-          <div class="section-title">${title}</div>
-          <div class="log-card">
-            <table>
-              <thead>
-                <tr>
-                  <th>Dato</th>
-                  <th>Person</th>
-                  <th>Oppgave</th>
-                  <th>Detalj</th>
-                </tr>
-              </thead>
-              <tbody>${rows}</tbody>
-            </table>
-          </div>
-        </div>
-      `;
+      const rows = byMonth[key].map(function(e) {
+        return '<div class="log-row">' +
+          '<span class="log-date">' + e.dateStr + '</span>' +
+          '<span class="log-badge pb-' + e.person + '">' + HUSPLAN.navn[e.person] + '</span>' +
+          '<span class="log-task">' + e.task + '</span>' +
+          (e.detail ? '<span class="log-detail">' + e.detail + '</span>' : '') +
+          '</div>';
+      }).join('');
+
+      sections.innerHTML +=
+        '<div>' +
+          '<div class="month-title">' + title + '</div>' +
+          '<div class="log-card">' + rows + '</div>' +
+        '</div>';
     });
   }
 </script>

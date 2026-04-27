@@ -532,7 +532,10 @@
 
       const cfg = HUSPLAN.gronland[person];
       let cursor = parseDate(cfg.start);
+      const logFrom = parseDate('27.04.2026');
       while (cursor < today) cursor = addDays(cursor, cfg.interval);
+      // Don't show dates before logFrom
+      if (cursor < logFrom) cursor = logFrom;
 
       var html = '', count = 0;
       while (cursor <= cutoff && count < 3) {
